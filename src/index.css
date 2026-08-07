@@ -1,0 +1,65 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f4f4f5;
+  --color-text: #0a0a0a;
+  --color-text-muted: #525252;
+  --color-border: #e4e4e7;
+  --color-accent: #dc2626;
+
+  --color-logo-blue: #1e3a8a;
+  --color-logo-green: #16a34a;
+  --color-logo-red: #dc2626;
+}
+
+.dark {
+  --color-bg: #000000;
+  --color-bg-secondary: #111111;
+  --color-text: #ffffff;
+  --color-text-muted: #a3a3a3;
+  --color-border: #262626;
+  --color-accent: #ef4444;
+}
+
+@theme {
+  --color-bg: var(--color-bg);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-accent: var(--color-accent);
+  --color-logo-blue: var(--color-logo-blue);
+  --color-logo-green: var(--color-logo-green);
+  --color-logo-red: var(--color-logo-red);
+}
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+  background: #27272a;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty));
+    opacity: 0;
+  }
+}
+
+.animate-float {
+  animation: float linear infinite;
+}
