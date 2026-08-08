@@ -1,45 +1,73 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, Clock3, Signal } from "lucide-react";
+import {
+  ArrowUpRight,
+  Clock3,
+  Signal,
+} from "lucide-react";
+
 import type { Course } from "../../data/courses";
+
+/* =========================================================
+   TYPES
+========================================================= */
 
 interface CourseCardProps {
   course: Course;
   index: number;
-
-  // Focus / interaction props
-  isFocused: boolean;
-  isAnyFocused: boolean;
-  onFocus: (id: number) => void;
-  onBlur: () => void;
 }
+
+/* =========================================================
+   ACCENT SYSTEM
+
+   Light mode:
+   blue  = navy
+   green = Bytherix green
+   red   = Bytherix red
+
+   Dark mode:
+   blue  = bright blue
+   green = bright teal
+   red   = bright red
+
+   The actual values come from variables.css.
+========================================================= */
 
 const accentStyles = {
   navy: {
-    color: "var(--color-navy)",
+    color: "var(--accent-blue)",
     soft: "var(--brand-blue-soft)",
+    border: "var(--brand-blue-border)",
+  },
+
+  blue: {
+    color: "var(--accent-blue)",
+    soft: "var(--brand-blue-soft)",
+    border: "var(--brand-blue-border)",
   },
 
   green: {
-    color: "var(--color-green)",
+    color: "var(--accent-green)",
     soft: "var(--brand-green-soft)",
+    border: "var(--brand-green-border)",
   },
 
   red: {
-    color: "var(--color-red)",
+    color: "var(--accent-red)",
     soft: "var(--brand-red-soft)",
+    border: "var(--brand-red-border)",
   },
 };
 
 export default function CourseCard({
   course,
   index,
-  isFocused,
-  isAnyFocused,
-  onFocus,
-  onBlur,
 }: CourseCardProps) {
   const Icon = course.icon;
-  const accent = accentStyles[course.accent];
+
+  const accent =
+    accentStyles[
+      course.accent as keyof typeof accentStyles
+    ] ?? accentStyles.navy;
 
   return (
     <motion.article
@@ -56,66 +84,57 @@ export default function CourseCard({
         amount: 0.2,
       }}
       transition={{
-        duration: 0.6,
-        delay: index * 0.08,
+        duration: 0.65,
+        delay: index * 0.06,
         ease: [0.22, 1, 0.36, 1],
-      }}
-      animate={{
-        scale:
-          isAnyFocused && !isFocused
-            ? 0.97
-            : 1,
-
-        opacity:
-          isAnyFocused && !isFocused
-            ? 0.72
-            : 1,
       }}
       whileHover={{
         y: -8,
-        scale: 1.015,
-        transition: {
-          duration: 0.35,
-          ease: [0.22, 1, 0.36, 1],
-        },
       }}
-      onMouseEnter={() => onFocus(course.id)}
-      onMouseLeave={onBlur}
-      onFocus={() => onFocus(course.id)}
       className="
         group
         relative
         flex
         h-full
-        cursor-pointer
         flex-col
         overflow-hidden
         rounded-[22px]
+
         border
         border-[var(--border-primary)]
+
         bg-[var(--surface-primary)]
+
         shadow-[var(--shadow-card)]
-        transition-colors
+
+        transition-all
         duration-500
+
+        hover:shadow-[var(--shadow-card-hover)]
       "
-      style={{
-        transformStyle: "preserve-3d",
-      }}
     >
-      {/* =================================================
+      {/* =====================================================
           TOP ACCENT LINE
-      ================================================= */}
+      ===================================================== */}
 
       <motion.div
-        className="absolute left-0 top-0 z-30 h-[3px] w-full origin-left"
+        className="
+          absolute
+          left-0
+          top-0
+          z-30
+          h-[3px]
+          w-full
+          origin-left
+        "
         style={{
           backgroundColor: accent.color,
         }}
         initial={{
           scaleX: 0,
         }}
-        animate={{
-          scaleX: isFocused ? 1 : 0,
+        whileHover={{
+          scaleX: 1,
         }}
         transition={{
           duration: 0.45,
@@ -123,9 +142,9 @@ export default function CourseCard({
         }}
       />
 
-      {/* =================================================
+      {/* =====================================================
           VISUAL AREA
-      ================================================= */}
+      ===================================================== */}
 
       <div
         className="
@@ -139,13 +158,12 @@ export default function CourseCard({
           backgroundColor: accent.soft,
         }}
       >
-        {/* -----------------------------------------------
-            Background glow
-        ------------------------------------------------ */}
+        {/* ===================================================
+            LARGE SOFT BRAND ORB
+        =================================================== */}
 
         <motion.div
           className="
-            pointer-events-none
             absolute
             left-1/2
             top-1/2
@@ -154,72 +172,84 @@ export default function CourseCard({
             -translate-x-1/2
             -translate-y-1/2
             rounded-full
+            blur-[1px]
           "
           style={{
             backgroundColor: accent.color,
+            opacity: 0.06,
           }}
-          animate={{
-            scale: isFocused ? 1.25 : 1,
-            opacity: isFocused ? 0.11 : 0.07,
+          whileHover={{
+            scale: 1.2,
+            opacity: 0.10,
           }}
           transition={{
-            duration: 0.6,
+            duration: 0.65,
             ease: [0.22, 1, 0.36, 1],
           }}
         />
 
-        {/* -----------------------------------------------
-            Decorative dots
-        ------------------------------------------------ */}
+        {/* ===================================================
+            DECORATIVE DOTS
+        =================================================== */}
 
-        <motion.div
-          className="absolute left-8 top-8 h-1.5 w-1.5 rounded-full"
+        <span
+          className="
+            absolute
+            left-8
+            top-8
+            h-1.5
+            w-1.5
+            rounded-full
+          "
           style={{
             backgroundColor: accent.color,
           }}
-          animate={{
-            scale: isFocused ? 1.5 : 1,
-          }}
-          transition={{
-            duration: 0.35,
-          }}
         />
 
-        <motion.div
-          className="absolute right-12 top-10 h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-600"
-          animate={{
-            y: isFocused ? -4 : 0,
-          }}
-          transition={{
-            duration: 0.4,
-          }}
+        <span
+          className="
+            absolute
+            right-12
+            top-10
+            h-2
+            w-2
+            rounded-full
+            bg-slate-300
+            dark:bg-slate-500
+          "
         />
 
-        <motion.div
-          className="absolute bottom-8 left-12 h-1.5 w-1.5 rounded-full"
+        <span
+          className="
+            absolute
+            bottom-8
+            left-12
+            h-1.5
+            w-1.5
+            rounded-full
+          "
           style={{
             backgroundColor: accent.color,
           }}
-          animate={{
-            x: isFocused ? 4 : 0,
-          }}
-          transition={{
-            duration: 0.4,
-          }}
         />
 
-        {/* =================================================
+        {/* ===================================================
             MAIN ILLUSTRATION
-        ================================================= */}
+        =================================================== */}
 
         <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          animate={{
-            y: isFocused ? -5 : 0,
-            scale: isFocused ? 1.06 : 1,
+          className="
+            absolute
+            inset-0
+            flex
+            items-center
+            justify-center
+          "
+          whileHover={{
+            scale: 1.055,
           }}
           transition={{
-            duration: 0.55,
+            duration: 0.5,
             ease: [0.22, 1, 0.36, 1],
           }}
         >
@@ -233,26 +263,50 @@ export default function CourseCard({
               justify-center
               rounded-2xl
               border
-              bg-white/75
+
+              backdrop-blur-md
+
               shadow-sm
-              backdrop-blur-sm
-              dark:bg-slate-900/60
+
+              transition-all
+              duration-500
+
+              dark:shadow-[0_10px_30px_rgba(0,0,0,0.18)]
             "
             style={{
-              borderColor: `${accent.color}20`,
+              backgroundColor:
+                "var(--course-visual-card)",
+
+              borderColor:
+                "var(--course-visual-border)",
             }}
           >
-            {/* Main icon */}
+            {/* =============================================
+                ICON CONTAINER
+            ============================================= */}
+
             <motion.div
-              className="flex h-16 w-16 items-center justify-center rounded-2xl"
+              className="
+                flex
+                h-16
+                w-16
+                items-center
+                justify-center
+                rounded-2xl
+                border
+                transition-all
+                duration-500
+              "
               style={{
-                backgroundColor: `${accent.color}12`,
+                backgroundColor: accent.soft,
+                borderColor: accent.border,
               }}
-              animate={{
-                rotate: isFocused ? -3 : 0,
+              whileHover={{
+                rotate: -3,
+                scale: 1.06,
               }}
               transition={{
-                duration: 0.35,
+                duration: 0.3,
               }}
             >
               <Icon
@@ -264,9 +318,9 @@ export default function CourseCard({
               />
             </motion.div>
 
-            {/* ---------------------------------------------
-                Floating mini block - left
-            ---------------------------------------------- */}
+            {/* =============================================
+                FLOATING LEFT BLOCK
+            ============================================= */}
 
             <motion.span
               className="
@@ -277,26 +331,24 @@ export default function CourseCard({
                 w-6
                 rounded-lg
                 border
-                bg-white
+                bg-[var(--surface-elevated)]
                 shadow-sm
-                dark:bg-slate-800
               "
               style={{
-                borderColor: `${accent.color}25`,
+                borderColor: accent.border,
               }}
-              animate={{
-                x: isFocused ? -5 : 0,
-                y: isFocused ? -4 : 0,
-                rotate: isFocused ? -6 : 0,
+              whileHover={{
+                x: -4,
+                y: -4,
               }}
               transition={{
-                duration: 0.45,
+                duration: 0.3,
               }}
             />
 
-            {/* ---------------------------------------------
-                Floating mini block - right
-            ---------------------------------------------- */}
+            {/* =============================================
+                FLOATING RIGHT BLOCK
+            ============================================= */}
 
             <motion.span
               className="
@@ -307,26 +359,24 @@ export default function CourseCard({
                 w-7
                 rounded-lg
                 border
-                bg-white
+                bg-[var(--surface-elevated)]
                 shadow-sm
-                dark:bg-slate-800
               "
               style={{
-                borderColor: `${accent.color}25`,
+                borderColor: accent.border,
               }}
-              animate={{
-                x: isFocused ? 5 : 0,
-                y: isFocused ? 4 : 0,
-                rotate: isFocused ? 6 : 0,
+              whileHover={{
+                x: 4,
+                y: 4,
               }}
               transition={{
-                duration: 0.45,
+                duration: 0.3,
               }}
             />
 
-            {/* ---------------------------------------------
-                Floating dot
-            ---------------------------------------------- */}
+            {/* =============================================
+                FLOATING DOT
+            ============================================= */}
 
             <motion.span
               className="
@@ -341,12 +391,10 @@ export default function CourseCard({
                 backgroundColor: accent.color,
               }}
               animate={{
-                y: isFocused
-                  ? [-2, -8, -2]
-                  : [0, -4, 0],
+                y: [0, -4, 0],
               }}
               transition={{
-                duration: isFocused ? 1.6 : 2.8,
+                duration: 2.8,
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
@@ -354,137 +402,101 @@ export default function CourseCard({
           </div>
         </motion.div>
 
-        {/* =================================================
-            CATEGORY BADGE
-        ================================================= */}
+        {/* ===================================================
+            CATEGORY
+        =================================================== */}
 
-        <motion.div
-          className="absolute bottom-4 left-5"
-          animate={{
-            y: isFocused ? -2 : 0,
-          }}
-          transition={{
-            duration: 0.3,
-          }}
+        <div
+          className="
+            absolute
+            bottom-4
+            left-5
+          "
         >
           <span
             className="
               rounded-full
               border
-              bg-white/85
+              bg-[var(--surface-elevated)]
               px-3
               py-1
+
               text-[10px]
               font-semibold
               uppercase
               tracking-[0.12em]
+
               backdrop-blur-md
-              dark:bg-slate-900/80
+
+              transition-all
+              duration-500
             "
             style={{
               color: accent.color,
-              borderColor: `${accent.color}22`,
+              borderColor: accent.border,
             }}
           >
             {course.category}
           </span>
-        </motion.div>
-
-        {/* =================================================
-            FOCUS / ARROW CIRCLE
-        ================================================= */}
-
-        <motion.div
-          className="
-            absolute
-            right-5
-            top-5
-            flex
-            h-10
-            w-10
-            items-center
-            justify-center
-            rounded-full
-            bg-white
-            shadow-md
-            dark:bg-slate-900
-          "
-          initial={{
-            opacity: 0,
-            scale: 0.6,
-            y: 6,
-          }}
-          animate={{
-            opacity: isFocused ? 1 : 0,
-            scale: isFocused ? 1 : 0.6,
-            y: isFocused ? 0 : 6,
-          }}
-          transition={{
-            duration: 0.3,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-        >
-          <motion.div
-            animate={{
-              x: isFocused ? 0 : -2,
-              y: isFocused ? 0 : 2,
-            }}
-            transition={{
-              duration: 0.3,
-            }}
-          >
-            <ArrowUpRight
-              size={17}
-              style={{
-                color: accent.color,
-              }}
-            />
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* =================================================
-          CONTENT
-      ================================================= */}
+      {/* =====================================================
+          CONTENT AREA
+      ===================================================== */}
 
-      <div className="flex flex-1 flex-col p-6">
-        {/* Title */}
+      <div
+        className="
+          flex
+          flex-1
+          flex-col
+          p-6
+        "
+      >
+        {/* ===================================================
+            TITLE
+        =================================================== */}
 
-        <motion.h3
+        <h3
           className="
             text-[17px]
             font-bold
             leading-tight
             tracking-[-0.02em]
+
             text-[var(--text-primary)]
+
+            transition-colors
+            duration-500
           "
-          animate={{
-            x: isFocused ? 2 : 0,
-          }}
-          transition={{
-            duration: 0.3,
-          }}
         >
           {course.title}
-        </motion.h3>
+        </h3>
 
-        {/* Description */}
+        {/* ===================================================
+            DESCRIPTION
+        =================================================== */}
 
         <p
           className="
             mt-3
             min-h-[48px]
+
             text-[13px]
             leading-6
+
             text-[var(--text-secondary)]
+
+            transition-colors
+            duration-500
           "
         >
           {course.description}
         </p>
 
-        {/* =================================================
+        {/* ===================================================
             META
-        ================================================= */}
+        =================================================== */}
 
         <div
           className="
@@ -492,9 +504,14 @@ export default function CourseCard({
             flex
             items-center
             gap-4
+
             border-t
             border-[var(--border-secondary)]
+
             pt-4
+
+            transition-colors
+            duration-500
           "
         >
           <div
@@ -526,11 +543,20 @@ export default function CourseCard({
           </div>
         </div>
 
-        {/* =================================================
+        {/* ===================================================
             BOTTOM CTA
-        ================================================= */}
+        =================================================== */}
 
-        <div className="mt-5 flex items-center justify-between">
+        <div
+          className="
+            mt-5
+            flex
+            items-center
+            justify-between
+          "
+        >
+          {/* Fee */}
+
           <div>
             <span
               className="
@@ -539,6 +565,7 @@ export default function CourseCard({
                 font-medium
                 uppercase
                 tracking-[0.14em]
+
                 text-[var(--text-muted)]
               "
             >
@@ -558,7 +585,9 @@ export default function CourseCard({
             </span>
           </div>
 
-          {/* View Course */}
+          {/* =================================================
+              VIEW COURSE BUTTON
+          ================================================= */}
 
           <motion.button
             type="button"
@@ -569,34 +598,45 @@ export default function CourseCard({
               gap-2
               overflow-hidden
               rounded-full
+
               border
+
               px-4
               py-2
+
               text-xs
               font-semibold
+
+              transition-all
+              duration-300
             "
             style={{
-              borderColor: `${accent.color}30`,
+              borderColor: accent.border,
               color: accent.color,
             }}
             whileHover={{
-              scale: 1.04,
+              scale: 1.035,
+              paddingRight: "17px",
             }}
             whileTap={{
-              scale: 0.96,
+              scale: 0.97,
             }}
             transition={{
               duration: 0.25,
             }}
           >
-            <span>View Course</span>
+            <span>
+              View Course
+            </span>
 
             <motion.span
-              animate={{
-                x: isFocused ? 2 : 0,
+              initial={{
+                x: -3,
+                opacity: 0.7,
               }}
               whileHover={{
-                x: 4,
+                x: 3,
+                opacity: 1,
               }}
               transition={{
                 duration: 0.25,
@@ -608,12 +648,20 @@ export default function CourseCard({
         </div>
       </div>
 
-      {/* =================================================
-          BOTTOM ACCENT GLOW
-      ================================================= */}
+      {/* =====================================================
+          BOTTOM ACCENT
+      ===================================================== */}
 
       <motion.div
-        className="pointer-events-none absolute bottom-0 left-0 h-[2px] w-full origin-left"
+        className="
+          pointer-events-none
+          absolute
+          bottom-0
+          left-0
+          h-[2px]
+          w-full
+          origin-left
+        "
         style={{
           backgroundColor: accent.color,
         }}
@@ -621,9 +669,9 @@ export default function CourseCard({
           scaleX: 0,
           opacity: 0,
         }}
-        animate={{
-          scaleX: isFocused ? 1 : 0,
-          opacity: isFocused ? 0.8 : 0,
+        whileHover={{
+          scaleX: 1,
+          opacity: 0.85,
         }}
         transition={{
           duration: 0.5,
