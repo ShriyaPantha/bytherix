@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import HeroBackground from "./HeroBackground"; // adjust path to match your folder structure
 
 interface HeroProps {
   docked: boolean;
@@ -28,8 +29,10 @@ const Hero = ({ docked }: HeroProps) => {
 
   return (
     <section className="relative z-10 min-h-[80vh] overflow-hidden">
+      <HeroBackground />
+
       <div
-        className="relative mx-auto max-w-7xl px-4 sm:px-8 pt-16 transition-all duration-700 ease-out"
+        className="relative z-10 mx-auto max-w-7xl px-4 sm:px-8 pt-16 transition-all duration-700 ease-out"
         style={{
           opacity: docked ? 1 : 0,
           transform: docked ? "translateY(0)" : "translateY(16px)",

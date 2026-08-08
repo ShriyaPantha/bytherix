@@ -3,10 +3,6 @@ import Navbar, { INTRO_TOTAL_MS } from "./components/layout/Navbar";
 import { ThemeProvider } from "./context/ThemeContext";
 import ThemeToggle from "./components/ui/ThemeToggle";
 
-const HeroBackground = lazy(
-  () => import("./components/sections/HeroBackground")
-);
-
 const Home = lazy(() => import("./pages/Home"));
 
 function App() {
@@ -14,7 +10,6 @@ function App() {
 
   useEffect(() => {
     const t = setTimeout(() => setDocked(true), INTRO_TOTAL_MS);
-
     return () => clearTimeout(t);
   }, []);
 
@@ -22,14 +17,11 @@ function App() {
     <ThemeProvider>
       <main className="relative min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-500">
         <div className="relative">
-          <Suspense fallback={null}>
-            <HeroBackground />
-          </Suspense>
           <ThemeToggle />
-
           <Navbar docked={docked} />
-
-          <Suspense fallback={null}>
+          <Suspense
+            fallback={<div className="min-h-screen bg-[var(--bg-primary)]" />}
+          >
             <Home docked={docked} />
           </Suspense>
         </div>

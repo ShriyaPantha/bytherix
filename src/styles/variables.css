@@ -61,7 +61,6 @@
     0 24px 55px rgba(15, 23, 42, 0.12);
 }
 
-
 /* =========================================================
    DARK THEME
 ========================================================= */
@@ -84,7 +83,7 @@
 
   /* =====================================================
      ACCENTS - DARK
-     
+
      Navy becomes BRIGHT BLUE in dark mode.
      This is the important fix.
   ===================================================== */
@@ -106,7 +105,6 @@
   ===================================================== */
 
   --course-visual-card: rgba(18, 27, 48, 0.92);
-
   --course-visual-border: rgba(148, 163, 184, 0.16);
 
   /* =====================================================
@@ -118,4 +116,16 @@
 
   --shadow-card-hover:
     0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+/* =========================================================
+   TAILWIND THEME MAPPING
+   Generates utility classes like text-logo-red, bg-logo-blue,
+   used directly in components (e.g. Navbar.tsx).
+========================================================= */
+
+@theme {
+  --color-logo-blue: var(--color-navy);
+  --color-logo-green: var(--color-green);
+  --color-logo-red: var(--color-red);
 }
