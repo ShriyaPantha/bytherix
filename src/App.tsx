@@ -1,8 +1,12 @@
 import { useEffect, useState, lazy, Suspense } from "react";
 import Navbar, { INTRO_TOTAL_MS } from "./components/layout/Navbar";
+// import Courses from "./components/sections/Courses";
+// import Services from "./components/sections/Services";
 
 const HeroBackground = lazy(() => import("./components/sections/HeroBackground"));
 const Home = lazy(() => import("./pages/Home"));
+// const Services = lazy(() => import("./components/sections/Services"));
+// const Courses = lazy(() => import("./components/sections/Courses"));  
 
 function App() {
   const [docked, setDocked] = useState(false);
@@ -21,6 +25,8 @@ function App() {
         <Navbar docked={docked} />
         <Suspense fallback={null}>
           <Home docked={docked} />
+          {/* <Services docked={docked} />
+          <Courses docked={docked} /> */}
         </Suspense>
       </div>
     </main>
