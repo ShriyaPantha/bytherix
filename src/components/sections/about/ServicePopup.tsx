@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import type { AboutFeature } from "../../data/aboutData";
+import type { AboutFeature } from "../../../data/aboutData";
 
 interface ServicePopupProps {
   feature: AboutFeature | null;
