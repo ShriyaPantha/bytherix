@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
-import { aboutFeatures, type AboutFeature } from "../../data/aboutData";
+import { aboutFeatures, type AboutFeature } from "../../../data/aboutData";
 import ServicePopup from "./ServicePopup";
 
 export default function ServicesMotionSection() {
