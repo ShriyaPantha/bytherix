@@ -6,8 +6,8 @@ body {
   margin: 0;
   min-width: 320px;
 
-  background: var(--color-white);
-  color: var(--color-slate-950);
+  background: var(--bg-primary);
+  color: var(--text-primary);
 
   font-family:
     Inter,
@@ -18,29 +18,62 @@ body {
     "Segoe UI",
     sans-serif;
 
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-button {
-  font: inherit;
-}
-
-::selection {
-  background: var(--color-navy);
-  color: var(--color-white);
-}
-
-/* Prevent horizontal overflow caused by motion/carousels */
+/* Prevent ugly horizontal overflow */
+html,
 body {
   overflow-x: hidden;
+}
+
+/* ================================
+   THEME TRANSITION
+================================ */
+
+* {
+  transition:
+    background-color 0.45s ease,
+    border-color 0.45s ease,
+    color 0.35s ease;
+}
+
+/*
+ * Don't animate transforms and opacity globally.
+ * Framer Motion needs full control over them.
+ */
+[class*="motion"] {
+  transition: none;
+}
+
+/* ================================
+   SELECTION
+================================ */
+
+::selection {
+  background: var(--color-green);
+  color: white;
+}
+
+/* ================================
+   SCROLLBAR
+================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-navy);
+  border-radius: 999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-green);
 }

@@ -8,20 +8,25 @@ import { services } from "../../data/services";
 const GAP = 20;
 
 export default function Services() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [containerWidth, setContainerWidth] = useState(0);
   const [visibleCards, setVisibleCards] = useState(3);
 
   const [activeIndex, setActiveIndex] = useState(0);
+
+  /*
+   * Hover is mainly for desktop.
+   * Selection works for both desktop and mobile.
+   */
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const [isPaused, setIsPaused] = useState(false);
 
-  /*
-   * Responsive visible cards
-   */
+  /* -------------------------------------------------
+     Responsive card count
+  ------------------------------------------------- */
   useEffect(() => {
     const updateLayout = () => {
       if (window.innerWidth < 640) {
@@ -42,21 +47,27 @@ export default function Services() {
     };
   }, []);
 
-  /*
-   * Measure carousel width
-   */
+  /* -------------------------------------------------
+     Measure carousel width
+  ------------------------------------------------- */
   useEffect(() => {
-    if (!containerRef.current) return;
+    const element = containerRef.current;
+
+    if (!element) return;
 
     const observer = new ResizeObserver((entries) => {
-      setContainerWidth(entries[0].contentRect.width);
+      const width = entries[0]?.contentRect.width ?? 0;
+      setContainerWidth(width);
     });
 
-    observer.observe(containerRef.current);
+    observer.observe(element);
 
     return () => observer.disconnect();
   }, []);
 
+  /* -------------------------------------------------
+     Carousel calculations
+  ------------------------------------------------- */
   const maxIndex = Math.max(
     services.length - visibleCards,
     0,
@@ -68,11 +79,20 @@ export default function Services() {
         visibleCards
       : 0;
 
-  /*
-   * Automatic movement
-   */
+  /* -------------------------------------------------
+     Keep active index valid after resize
+  ------------------------------------------------- */
   useEffect(() => {
-    if (isPaused) return;
+    setActiveIndex((current) =>
+      Math.min(current, maxIndex),
+    );
+  }, [maxIndex]);
+
+  /* -------------------------------------------------
+     Auto carousel
+  ------------------------------------------------- */
+  useEffect(() => {
+    if (isPaused || maxIndex === 0) return;
 
     const timer = window.setInterval(() => {
       setActiveIndex((current) =>
@@ -80,9 +100,14 @@ export default function Services() {
       );
     }, 4200);
 
-    return () => window.clearInterval(timer);
+    return () => {
+      window.clearInterval(timer);
+    };
   }, [isPaused, maxIndex]);
 
+  /* -------------------------------------------------
+     Navigation
+  ------------------------------------------------- */
   const goNext = () => {
     setActiveIndex((current) =>
       current >= maxIndex ? 0 : current + 1,
@@ -99,18 +124,95 @@ export default function Services() {
     setActiveIndex(index);
   };
 
+  /* -------------------------------------------------
+     Card interaction
+  ------------------------------------------------- */
+  const handleCardSelect = (index: number) => {
+    setSelectedIndex(index);
+    setHoveredIndex(index);
+  };
+
+  const handleCardHover = (index: number | null) => {
+    setHoveredIndex(index);
+
+    /*
+     * On desktop, hovering changes the active
+     * visual state.
+     */
+    if (index !== null) {
+      setSelectedIndex(index);
+    }
+  };
+
+  const handleCardLeave = () => {
+    setHoveredIndex(null);
+  };
+
   return (
     <section
       id="services"
-      className="relative overflow-hidden bg-white py-24 sm:py-28 lg:py-32"
+      className="
+        relative overflow-hidden
+        bg-[var(--bg-primary)]
+        py-20
+        transition-colors duration-500
+        sm:py-24
+        lg:py-28
+      "
     >
-      {/* Very subtle brand background */}
-      <div className="pointer-events-none absolute left-0 top-0 h-64 w-64 rounded-full bg-blue-100/30 blur-3xl" />
+      {/* -------------------------------------------------
+          Subtle brand background
+      ------------------------------------------------- */}
 
-      <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-green-100/25 blur-3xl" />
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -left-40
+          top-20
+          h-80
+          w-80
+          rounded-full
+          bg-[var(--brand-blue-soft)]
+          blur-[110px]
+          opacity-70
+        "
+      />
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -right-40
+          top-[35%]
+          h-80
+          w-80
+          rounded-full
+          bg-[var(--brand-green-soft)]
+          blur-[110px]
+          opacity-70
+        "
+      />
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          bottom-[-160px]
+          left-[35%]
+          h-80
+          w-80
+          rounded-full
+          bg-[var(--brand-red-soft)]
+          blur-[110px]
+          opacity-60
+        "
+      />
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-        {/* Heading */}
+        {/* -------------------------------------------------
+            Heading
+        ------------------------------------------------- */}
         <motion.div
           initial={{
             opacity: 0,
@@ -128,29 +230,67 @@ export default function Services() {
             duration: 0.65,
             ease: [0.22, 1, 0.36, 1],
           }}
-          className="mb-12 max-w-2xl"
+          className="mb-12 max-w-2xl lg:mb-14"
         >
           <div className="mb-4 flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
+            <span
+              className="
+                h-1.5
+                w-1.5
+                rounded-full
+                bg-[var(--color-green)]
+              "
+            />
 
-            <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#1e3a8a]">
+            <p
+              className="
+                text-[11px]
+                font-bold
+                uppercase
+                tracking-[0.24em]
+                text-[var(--color-green)]
+              "
+            >
               What We Provide
             </p>
           </div>
 
-          <h2 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">
+          <h2
+            className="
+              text-4xl
+              font-semibold
+              tracking-[-0.04em]
+              text-[var(--text-primary)]
+              transition-colors duration-500
+              sm:text-5xl
+            "
+          >
             Technology that moves
-            <span className="text-[#1e3a8a]"> business forward.</span>
+            <span className="text-[var(--color-navy)] dark:text-cyan-400">
+              {" "}
+              business forward.
+            </span>
           </h2>
 
-          <p className="mt-5 max-w-xl text-[15px] leading-7 text-slate-500">
-            From digital products and cloud infrastructure to AI,
-            security and creative solutions, we build technology
-            that helps businesses grow.
+          <p
+            className="
+              mt-5
+              max-w-xl
+              text-[15px]
+              leading-7
+              text-[var(--text-secondary)]
+              transition-colors duration-500
+            "
+          >
+            From digital products and cloud infrastructure
+            to AI, security and creative solutions, we build
+            technology that helps businesses grow.
           </p>
         </motion.div>
 
-        {/* Carousel */}
+        {/* -------------------------------------------------
+            Carousel
+        ------------------------------------------------- */}
         <div
           ref={containerRef}
           className="relative"
@@ -178,7 +318,11 @@ export default function Services() {
                 duration: 0.75,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="flex cursor-grab active:cursor-grabbing"
+              className="
+                flex
+                cursor-grab
+                active:cursor-grabbing
+              "
               style={{
                 gap: GAP,
               }}
@@ -196,8 +340,9 @@ export default function Services() {
                     index={index}
                     isHovered={hoveredIndex === index}
                     isSelected={selectedIndex === index}
-                    onHover={setHoveredIndex}
-                    onSelect={setSelectedIndex}
+                    onHover={handleCardHover}
+                    onSelect={handleCardSelect}
+                    onLeave={handleCardLeave}
                   />
                 </div>
               ))}
@@ -205,8 +350,21 @@ export default function Services() {
           </div>
         </div>
 
-        {/* Bottom navigation */}
-        <div className="mt-9 flex items-center justify-between border-t border-slate-100 pt-5">
+        {/* -------------------------------------------------
+            Bottom navigation
+        ------------------------------------------------- */}
+        <div
+          className="
+            mt-9
+            flex
+            items-center
+            justify-between
+            border-t
+            border-[var(--border-secondary)]
+            pt-5
+            transition-colors duration-500
+          "
+        >
           {/* Progress */}
           <div className="flex items-center gap-1.5">
             {Array.from({
@@ -218,12 +376,14 @@ export default function Services() {
                 aria-label={`Go to service ${index + 1}`}
                 onClick={() => goTo(index)}
                 className={`
-                  h-1 rounded-full
-                  transition-all duration-500
+                  h-1
+                  rounded-full
+                  transition-all
+                  duration-500
                   ${
                     activeIndex === index
-                      ? "w-8 bg-[#1e3a8a]"
-                      : "w-2 bg-slate-200 hover:bg-slate-300"
+                      ? "w-8 bg-[var(--color-green)]"
+                      : "w-2 bg-[var(--border-primary)]"
                   }
                 `}
               />
@@ -237,14 +397,20 @@ export default function Services() {
               onClick={goPrevious}
               aria-label="Previous services"
               className="
-                flex h-9 w-9 items-center justify-center
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
                 rounded-full
-                border border-slate-200
-                bg-white
-                text-slate-500
+                border
+                border-[var(--border-primary)]
+                bg-[var(--surface-primary)]
+                text-[var(--text-secondary)]
                 transition-all
-                hover:border-[#1e3a8a]
-                hover:text-[#1e3a8a]
+                duration-300
+                hover:border-[var(--color-green)]
+                hover:text-[var(--color-green)]
               "
             >
               <ArrowLeft size={15} />
@@ -255,12 +421,17 @@ export default function Services() {
               onClick={goNext}
               aria-label="Next services"
               className="
-                flex h-9 w-9 items-center justify-center
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
                 rounded-full
-                bg-slate-950
+                bg-[var(--color-navy)]
                 text-white
                 transition-all
-                hover:bg-[#1e3a8a]
+                duration-300
+                hover:bg-[var(--color-green)]
               "
             >
               <ArrowRight size={15} />
